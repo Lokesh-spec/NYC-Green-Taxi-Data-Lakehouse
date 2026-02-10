@@ -13,6 +13,10 @@ gs://nyc-green-taxi-raw/2026/02/10/14/*.parquet
     - **Gold Layer:** Analytics-ready tables aggregated for business use cases; also supports incremental updates.
 - **Incremental Loads:** Implemented in silver and gold layers to reduce BigQuery costs and improve performance by processing only new or updated records.
 
+## Architecture Diagram
+
+![NYC Green Taxi Lakehouse Architecture](docs/NYC-Green-Taxi-Data-Lakehouse-Architecture.jpeg)
+
 
 ## Project Structure
 ```bash
