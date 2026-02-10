@@ -84,7 +84,7 @@ Dataflow loads that window → BigQuery MERGE ensures:
 - Build Fact
 - Build Aggregates
 
-DAG Diagram:
+**DAG Diagram:**
 ![Dag Diagram](docs/images/Dag_Diagram.png)
 
 ## Project Structure
