@@ -5,7 +5,8 @@ from airflow.exceptions import AirflowSkipException
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 from airflow.providers.google.cloud.transfers.gcs_to_bigquery import GCSToBigQueryOperator
-from pendulum import datetime
+from pendulum import datetime, duration
+from datetime import timedelta
 
 import yaml
 from pathlib import Path
@@ -45,7 +46,14 @@ STAGING_LOCATION = config["dataflow"]["staging_location"]
     start_date=datetime(2026, 2, 9, 12, tz=local_tz),
     schedule="@hourly",
     catchup=True,
-    tags=["gcs", "beam", "bigquery"]
+    sla=timedelta(minutes=10),
+    tags=["gcs", "beam", "bigquery"],
+    default_args={
+        "retries": 1,
+        "retry_delay": timedelta(minutes=5),
+        "retry_exponential_backoff": True,
+        "max_retry_delay": duration(minutes=40),
+    }
 )
 def nyc_green_taxi_lakehouse_pipeline():
 
