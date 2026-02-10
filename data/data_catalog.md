@@ -2,7 +2,7 @@
 
 This folder is intended to store raw and reference data for the NYC Green Taxi Data Warehouse.
 
-> **Note:** Raw data files are **not included** in this repository due to size.
+> **Note:** Raw data files are **not included** in this repository due to size and licensing restrictions.
 
 Please refer to the official source to download the data:  
 [NYC TLC Green Taxi Trip Records](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page)
@@ -31,3 +31,6 @@ Please refer to the official source to download the data:
 | `trip_type`             | Type of trip                                                  | 1 = Street-hail<br>2 = Dispatch                                                                                                    |
 | `congestion_surcharge`  | NYS congestion surcharge collected for the trip               | Decimal                                                                                                                            |
 | `cbd_congestion_fee`    | MTA Congestion Relief Zone fee (from Jan 5, 2025)             | Decimal                                                                                                                            |
+
+
+![Data Catalog](images/DataCatlog.drawio.png)
