@@ -15,7 +15,7 @@ gs://nyc-green-taxi-raw/2026/02/10/14/*.parquet
 
 ## Architecture Diagram
 
-![NYC Green Taxi Lakehouse Architecture](docs/NYC-Green-Taxi-Data-Lakehouse-Architecture.jpeg)
+![NYC Green Taxi Lakehouse Architecture](docs/images/NYC-Green-Taxi-Data-Lakehouse-Architecture.jpeg)
 
 
 ## Project Structure
