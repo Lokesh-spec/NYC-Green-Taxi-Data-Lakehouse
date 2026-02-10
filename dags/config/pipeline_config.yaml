@@ -1,0 +1,64 @@
+gcp:
+  project_id: glass-chemist-483110-u0
+  region: us-central1
+
+
+# -------------------------------------------------
+# Dataset Names
+# -------------------------------------------------
+datasets:
+  bronze: nyc_taxi_bronze
+  silver: nyc_taxi_silver
+  gold: nyc_taxi_gold
+
+
+# -------------------------------------------------
+# BigQuery Tables (Fully Qualified)
+# -------------------------------------------------
+bigquery:
+  bronze_trip_table: "glass-chemist-483110-u0.nyc_taxi_bronze.green_tripdata"
+  bronze_lookup_table: "glass-chemist-483110-u0.nyc_taxi_bronze.taxi_zone_lookup"
+
+
+
+# -------------------------------------------------
+# GCS
+# -------------------------------------------------
+gcs:
+  bucket: nyc-green-taxi-raw
+  base_prefix: raw
+  lookup_file_path: lookup/taxi_zone_lookup.csv
+
+
+# -------------------------------------------------
+# Dataflow
+# -------------------------------------------------
+dataflow:
+  temp_location: gs://nyc-green-taxi-tmp/temp
+  staging_location: gs://nyc-green-taxi-tmp/staging
+
+
+# -------------------------------------------------
+# Beam
+# -------------------------------------------------
+beam:
+  script_path: /opt/airflow/beam/ny_taxi_green_ingestion.py
+
+
+# -------------------------------------------------
+# SQL files
+# -------------------------------------------------
+sql:
+  silver:
+    trips: /opt/airflow/sql/silver/merge_green_tripdata_bronze_to_silver.sql
+    lookup: /opt/airflow/sql/silver/load_taxi_zone_lookup_bronze_to_silver.sql
+
+  gold:
+    dim_dates: /opt/airflow/sql/gold/dim_dates.sql
+    dim_locations: /opt/airflow/sql/gold/dim_locations.sql
+    dim_payments: /opt/airflow/sql/gold/dim_payments.sql
+    fact_trips: /opt/airflow/sql/gold/fact_trips.sql
+
+  analytics:
+    daily: /opt/airflow/sql/gold/fact_zone_daily_metrics.sql
+    monthly: /opt/airflow/sql/gold/fact_zone_monthly_metrics.sql
