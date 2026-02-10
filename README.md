@@ -1,22 +1,91 @@
 # NYC-Green-Taxi-Data-Lakehouse
-Modern data platform processing NYC taxi trips from GCS to BigQuery using Airflow and Dataflow. Covers raw ingestion, transformations, dimensional modeling, and analytics tables with scalable, modular design.
+End-to-end batch data platform built on Google Cloud using GCS → Dataflow → BigQuery → Airflow following the Medallion Architecture (Bronze / Silver / Gold).
 
-## Project Overview
-- **Source:** Raw Parquet files arrive hourly in GCS in a **time-partitioned format**:
-```bash
-gs://nyc-green-taxi-raw/2026/02/10/14/*.parquet
-```
-- **Pipeline Orchestration:** Airflow DAGs run hourly to check for new files. If files are present, the DAG triggers a **Dataflow (Apache Beam)** pipeline to parse and load the data.
-- Data Lakehouse Architecture:
-    - **Bronze Layer:** Raw data is loaded from GCS into BigQuery with minimal transformation.
-    - **Silver Layer:** Cleaned and transformed data; supports incremental loads to optimize cost and avoid scanning the entire table.
-    - **Gold Layer:** Analytics-ready tables aggregated for business use cases; also supports incremental updates.
-- **Incremental Loads:** Implemented in silver and gold layers to reduce BigQuery costs and improve performance by processing only new or updated records.
+This project demonstrates production-style ingestion, incremental processing, dimensional modeling, and analytics-ready serving.
+
+## Project Goals
+- Build a scalable & cost-efficient batch pipeline
+- Process data by time partitions
+- Maintain idempotent incremental loads
+- Apply data quality & transformations
+- Deliver analytics-ready star schema
+- Orchestrate everything with Airflow
+
+## Technologies Used
+| **Area**         | **Technology / Tool**              |
+|------------------|----------------------------------|
+| Storage          | Google Cloud Storage              |
+| Processing       | Apache Beam / Dataflow            |
+| Warehouse        | BigQuery                          |
+| Orchestration    | Apache Airflow                    |
+| SQL              | BigQuery Standard SQL             |
+| Config           | YAML                              |
 
 ## Architecture Diagram
 
 ![NYC Green Taxi Lakehouse Architecture](docs/images/NYC-Green-Taxi-Data-Lakehouse-Architecture.jpeg)
 
+## Bronze Layer – Raw
+
+**Purpose:** Immutable ingestion from source.
+
+**Tables**
+- green_tripdata
+- taxi_zone_lookup
+
+**Characteristics**
+
+- Append-only
+- Minimal transformation
+- Includes ingestion metadata
+- Supports replay
+
+## Silver Layer – Clean & Standardized
+
+**Purpose:** Business-ready cleaned data.
+
+**Transformations**
+- Data type standardization
+- Code → description mapping
+- Invalid & negative handling
+- Deduplication
+- Incremental MERGE using ingestion_ts
+
+## Gold Layer – Star Schema
+
+**Purpose:** Optimized for analytics & BI.
+
+**Dimensions**
+- dim_dates
+- dim_locations
+- dim_payments
+
+**Facts**
+- fact_trips
+
+**Aggregations**
+- fact_zone_daily_metrics
+- fact_zone_monthly_metrics
+
+## Incremental Strategy
+
+Airflow processes data per time window.
+
+Dataflow loads that window → BigQuery MERGE ensures:
+- latest version per key
+- safe reprocessing
+- no duplicates
+
+##  Orchestration Flow
+- Airflow detects partition
+- Run Dataflow → Bronze
+- Bronze → Silver MERGE
+- Build Dimensions
+- Build Fact
+- Build Aggregates
+
+DAG Diagram:
+![Dag Diagram](docs/images/Dag_Diagram.png)
 
 ## Project Structure
 ```bash
@@ -81,11 +150,23 @@ NYC-Green-Taxi-Data-Lakehouse/
 5. Gold Layer
     - Aggregates and models data for analytics use cases.
     - Also incremental, ensuring cost-effective updates.
+ 
+ 
+## Data Quality & Testing
 
-## Technologies Used
-- Apache Airflow – Orchestration of hourly DAGs
-- Apache Beam / Google Dataflow – Scalable ETL pipelines
-- Google Cloud Storage (GCS) – Raw data landing zone
-- BigQuery – Data warehouse for bronze, silver, gold tables
-- Docker / Docker Compose – Local development and testing
-- SQL – Table creation, transformation, and aggregation logic
+**Bronze**
+- Schema validation
+- Null checks
+- Type checks
+
+**Silver**
+- PK uniqueness (trip_id)
+- Valid timestamps
+- Positive distance/fare
+
+**Gold**
+- FK integrity
+- No orphan keys
+- Aggregation correctness
+
+
