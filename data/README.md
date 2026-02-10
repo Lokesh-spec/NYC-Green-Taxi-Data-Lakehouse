@@ -34,3 +34,28 @@ Please refer to the official source to download the data:
 
 
 ![Data Catalog](images/DataCatlog.drawio.png)
+
+
+## Raw Data Storage Layout (GCS)
+Raw NYC Green Taxi trip files are stored in Google Cloud Storage (GCS) using a time-partitioned directory structure to support hourly ingestion, incremental processing, and efficient reprocessing.
+
+**GCS Folder Structure**
+```bash
+gs://nyc-green-taxi-raw/raw/YYYY/MM/DD/HH/*.parquet
+```
+
+**Example**
+```bash
+gs://nyc-green-taxi-raw/raw/2026/02/10/04/*.parquet
+```
+
+**Structure Breakdown**
+| Folder Level | Description                              |
+| ------------ | ---------------------------------------- |
+| `raw/`       | Landing zone for unprocessed source data |
+| `YYYY/`      | Year of data arrival                     |
+| `MM/`        | Month of data arrival                    |
+| `DD/`        | Day of data arrival                      |
+| `HH/`        | Hour of data arrival (24-hour format)    |
+| `*.parquet`  | Raw NYC Green Taxi trip files            |
+
